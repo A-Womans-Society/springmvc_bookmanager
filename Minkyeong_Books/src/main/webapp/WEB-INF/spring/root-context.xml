@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<!-- myBatis 관련 설정 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation"
+			value="classpath:config/mybatis-config.xml" /> <!-- 마이바티스 동작규칙 지정된 설정파일 -->
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:config/sqlmap-books.xml</value> <!-- SQL쿼리 메서드와 매핑된 SQL구문 정의 설정파일 -->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sqlSessionTemplate"	class="org.mybatis.spring.SqlSessionTemplate"
+		destroy-method="clearCache">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- MultipartResolver 등록 파일업로드 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+       <property name="maxUploadSize" value="10485760" />
+       <property name="maxInMemorySize" value="10485760" />
+    </bean>
+
+	<!-- 데이터베이스 연결 설정 -->
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="oracle.jdbc.OracleDriver" />
+		<property name="jdbcUrl"
+			value="jdbc:oracle:thin:@localhost:1521:xe" />
+		<property name="user" value="c##tester" />
+		<property name="password" value="1234" />
+
+		<!-- 커넥션 풀에 관련된 설정 후 -->
+		<!-- DB연동 기능을 수행할 JdbcTemplate 객체 생성하는 코드 작성하자 -->
+		<property name="maxPoolSize" value="100" />
+		<property name="maxIdleTime" value="600" />
+		<property name="idleConnectionTestPeriod" value="300" />
+	</bean>
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<context:component-scan	base-package="kr.books.web" />
+	<context:component-scan	base-package="kr.books.web.controller" />
+	<context:component-scan	base-package="kr.books.web.model" />
+	
+</beans>
+
