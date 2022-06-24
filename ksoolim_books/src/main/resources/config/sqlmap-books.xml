@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="books.dtd">
+  
+  	<insert id="insert" parameterType="books">
+  		insert into "BOOKS" ("NUM", "ISBN", "SUBJECT", "WRITER", "PUBLISHER", "PRICE", "IMAGE", "COMMENT") values (SEQ_BOOKS.nextval, #{isbn}, #{subject}, #{writer}, #{publisher}, #{price}, #{image}, #{comment})
+  	</insert>
+  	
+  	<select id="list" resultType="books">
+  		select * from BOOKS order by NUM
+	</select>
+	
+	<select id="detail" resultType="books">
+  		select * from BOOKS where NUM = #{num}
+	</select>
+	
+  	<select id="search" resultType="books" parameterType="searchCommand">
+		select * from BOOKS where 
+		<choose>
+			<when test="type == 'subject'">
+			SUBJECT like '%'||#{keyword}||'%' order by NUM desc
+			 </when>
+			<when test="type == 'writer'"> 
+			WRITER like '%'||#{keyword}||'%' order by NUM desc
+			</when>
+		</choose>
+		
+	</select>
+	
+	<delete id="delete" parameterType="books">
+		DELETE FROM books WHERE num = #{num}
+	</delete>
+	
+	<update id="update" parameterType="books">
+		update BOOKS set "ISBN"=#{isbn}, "SUBJECT"=#{subject}, "WRITER"=#{writer}, "PUBLISHER"=#{publisher}, "PRICE"=#{price}, "COMMENT"=#{comment} WHERE num=#{num}
+	</update>
+
+	
+  </mapper>
