@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="book.dtd">
+<!-- book.dtd -->
+	
+	<sql id="selectFromBook">
+        SELECT num, isbn, name, author, publisher, price, ofile, sfile, content
+        FROM book
+    </sql>
+	
+	<!-- 모든 도서객체 수 정수형으로 반환 -->
+	<select id="count" resultType="Integer">
+		SELECT COUNT(*) FROM book
+	</select>
+	
+	<!-- 책 고유번호 오름차순으로 나열된 도서객체를 리스트로 반환 -->
+	<select id="selectAll" resultType="book">
+		SELECT * FROM book ORDER BY num DESC
+	</select>
+	<!-- 저자명을 받아서 해당하는 도서객체 반환 -->
+	<select id="selectByAuthor" parameterType="String" resultType="book">
+		SELECT * FROM book WHERE author=#{author}
+	</select>	
+	<!-- 키워드를 받아서 해당하는 도서객체 반환 -->
+<!-- 	<select id="selectByKeyword" parameterType="hashmap" resultType="book"> -->
+<!-- 		SELECT * FROM book WHERE name LIKE #{name} or author LIKE #{author} -->
+<!-- 	</select>	 -->
+	<!-- 페이지 설정 적용 -->
+    <select id="selectPage" parameterType="map" resultType="book">
+        <include refid="selectFromBook"/>
+        ORDER BY num DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>	
+    
+	<!-- 고유번호를 받아서 도서객체를 반환 -->
+	<select id="selectByNum" parameterType="Long" resultType="book">
+		SELECT * FROM book WHERE num=#{num}
+	</select>
+	<!-- ISBN을 받아서 해당하는 도서객체 반환 -->
+	<select id="selectByIsbn" parameterType="String" resultType="book">
+		SELECT * FROM book WHERE isbn=#{isbn}
+	</select>
+	<!-- 도서명을 받아서 해당하는 도서객체 반환 -->
+	<select id="selectByName" parameterType="String" resultType="book">
+		SELECT * FROM book WHERE name=#{name}
+	</select>
+	
+	<!-- 등록 -->
+	<insert id="insert" parameterType="book">
+		INSERT INTO book (num, isbn, name, author, publisher, price, ofile, sfile, content)
+		VALUES (seq_book_num.NEXTVAL, #{isbn}, #{name}, #{author}, #{publisher}, #{price}, #{ofile}, #{sfile}, #{content})
+		<selectKey keyProperty="num" resultType="Long">
+			SELECT NVL(MAX(num), 0) FROM book
+		</selectKey>
+	</insert>
+	
+	<!-- 삭제 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM book WHERE num = #{num}
+    </delete>
+    
+    <!-- 첨부파일 없는 수정 -->
+    <update id="updateWoFile" parameterType="book">
+        UPDATE book
+        SET isbn=#{isbn}
+          , name=#{name}
+          , author=#{author}
+          , publisher=#{publisher}
+          , price=#{price}
+          , content=#{content}
+        WHERE num=#{num}
+    </update>    
+    <!-- 첨부파일 있는 수정 -->
+    <update id="update" parameterType="book">
+        UPDATE book
+        SET isbn=#{isbn}
+          , name=#{name}
+          , author=#{author}
+          , publisher=#{publisher}
+          , price=#{price}
+          , ofile=#{ofile}
+          , sfile=#{sfile}
+          , content=#{content}
+        WHERE num=#{num}
+    </update>
+	
+	<!-- 조건절 -->
+    <sql id="condition">
+        <choose>
+            <when test='option=="I"'> <!-- ISBN으로 검색 -->
+                AND isbn=#{keyword} <!-- ISBN은 정확히 일치해야 함 -->
+            </when>
+            <when test='option=="N"'> <!-- 도서명으로 검색 -->
+                AND name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+            </when>
+            <when test='option=="A"'> <!-- 저자명으로 검색 -->
+                AND author LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+            </when>
+            <otherwise>
+            	AND 1=1
+            </otherwise>
+        </choose>
+    </sql>
+
+    <select id="searchSelectPage" parameterType="map" resultType="book">
+		SELECT rn, num, isbn, name, author, publisher, price, ofile, sfile, content FROM (
+        	SELECT ROWNUM AS rn, num, isbn, name, author, publisher, price, ofile, sfile, content
+        	FROM book
+        	WHERE 1=1
+			<include refid="condition"/>
+		)
+		WHERE rn BETWEEN #{offsetNext} and #{lastNum}
+    </select>
+
+    <select id="searchResultCnt" parameterType="searchCondition" resultType="Integer">
+        SELECT count(*)
+        FROM  book
+        WHERE 1=1
+        <include refid="condition"/>
+    </select>
+	
+</mapper>

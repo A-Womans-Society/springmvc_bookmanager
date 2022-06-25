@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx.xsd
+  http://mybatis.org/schema/mybatis-spring 
+  http://mybatis.org/schema/mybatis-spring.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- DataSource 등록 -->
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<!-- 접속 관련 설정 -->
+		<property name="driverClass" value="oracle.jdbc.OracleDriver" />
+		<property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:xe" /> 
+		<property name="user" value="c##spring" />
+		<property name="password" value="1234" />
+
+		<!-- 커넥션 풀에 관련된 설정 -->
+		<property name="maxPoolSize" value="100" />
+		<property name="maxIdleTime" value="600" />
+		<property name="idleConnectionTestPeriod" value="300" />
+	</bean>
+	
+	<!-- 선언적 트랜잭션 관련 설정 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<bean id="transactionManager" 
+		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>	
+	</bean>
+	
+	
+	<bean id="bookDao" class="com.mellie.melan_bookbook.dao.BookDaoImpl">
+		<constructor-arg ref="sqlSessionTemplate" />
+	</bean>
+	
+	<!-- myBatis 관련 설정 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:config/mybatis-config.xml" /> <!-- 마이바티스 동작규칙 지정된 설정파일 -->
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:config/sqlmap-book.xml</value> <!-- SQL쿼리 메서드와 매핑된 SQL구문 정의 설정파일 -->
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 이건 javaconfig로 mybatis설정할 때 사용 -->
+<!-- 	<mybatis:scan base-package="com.mellie.bookbook"/> -->
+	
+	<!-- 파일업로드에 필요한 bean -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10485760" />
+		<property name="maxInMemorySize" value="10485760" />
+	</bean>
+	
+<!-- 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> -->
+<!--     	<property name="basename" value="/resources/config/message" /> -->
+<!-- 	</bean> -->
+	
+	<!-- 스프링 메세지 소스 설정 -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+<!-- 				<value>/WEB-INF/properties/label</value> -->
+				<value>message.label</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8"></property>
+	</bean>
+	
+<!-- 	<bean id='messageSourceAccessor' class='org.springframework.context.support.MessageSourceAccessor'> -->
+<!-- 		<constructor-arg ref='messageSource'/> -->
+<!-- 	</bean> -->
+		
+</beans>
