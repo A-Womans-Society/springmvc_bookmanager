@@ -1,0 +1,16 @@
+create table BOOKS (
+    NO number PRIMARY key,
+    BOOK_ISBN varchar2(200),
+    TITLE varchar2(200),
+    AUTHER varchar2(200),
+    PUBLISHER varchar2(200),
+    PRICE number,
+    IMG varchar2(200),
+    CONTENT varchar2(200)
+);
+
+
+create sequence SEQ_BOOK start with 1 NOCACHE NOCYCLE;
+
+
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="books.dtd">
+	<select id="list" resultType="book">
+		SELECT * FROM BOOKS ORDER BY NO
+		DESC
+	</select>
+
+	<insert id="insert" parameterType="book">
+		INSERT INTO books (no,
+		bookIsbn, title, author, publisher, price, img, content)
+		VALUES
+		(seq_book.NEXTVAL, #{bookIsbn}, #{title}, #{author}, #{publisher},
+		#{price}, #{imgFile}, #{content})
+
+	</insert>
+
+	<select id="read" parameterType="int" resultType="book">
+		SELECT * FROM
+		BOOKS WHERE no = #{no}
+	</select>
+
+	<select id="search" parameterType="searchCommand"
+		resultType="book">
+		SELECT * FROM
+		BOOKS WHERE
+		<choose>
+			<when test='category.equals("publisher")'>
+				publisher like '%'||#{keyword}||'%'
+			</when>
+			<when test='category.equals("title")'>
+				title like '%'||#{keyword}||'%'
+			</when>
+			<when test='category.equals("author")'>
+				author like '%'||#{keyword}||'%'
+			</when>
+		</choose>
+		 ORDER BY NO DESC
+	</select>
+</mapper>
