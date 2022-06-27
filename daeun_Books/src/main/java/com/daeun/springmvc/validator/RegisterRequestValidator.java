@@ -1,40 +1,40 @@
 package com.daeun.springmvc.validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.daeun.springmvc.spring.RegisterRequest;
 
+@Component
 public class RegisterRequestValidator implements Validator{
-
+	
+	
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return false;
+		return RegisterRequest.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
 		RegisterRequest regReq = (RegisterRequest) target;
 		
-		if(regReq.getIsbn() == null || regReq.getIsbn().trim().isEmpty()) {
-			errors.rejectValue("isbn", "required");
-		} 
-		if(regReq.getTitle() == null || regReq.getTitle().trim().isEmpty()) {
-			errors.rejectValue("title", "required");
-		} 
-		if(regReq.getWriter() == null || regReq.getWriter().trim().isEmpty()) {
-			errors.rejectValue("writer", "required");
-		} 
-		if(regReq.getPublisher() == null || regReq.getPublisher().trim().isEmpty()) {
-			errors.rejectValue("publisher", "required");
-		} 
-		if(regReq.getPrice() == 0) {
-			errors.rejectValue("price", "required");
-		} 
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "isbn", "isbn.required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "title.required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "writer", "writer.required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "publisher", "publisher.required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "introduce", "introduce.required");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "price", "price.required");
 		
-		if(regReq.getIntroduce() == null || regReq.getIntroduce().trim().isEmpty()) {
-			errors.rejectValue("introduce", "required");
-		} 
+		String isbn = regReq.getIsbn();
+		boolean isNumeric =  isbn.matches("[+-]?\\d*(\\.\\d+)?");
+		if (!isNumeric) { // isbn이 숫자가 아니면 에러 추가
+			errors.rejectValue("isbn", "typemismatch.isbn");
+		}
+		
 		
 	}
 

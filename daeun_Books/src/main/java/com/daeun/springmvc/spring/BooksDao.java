@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BooksDao {
-	void insert(BooksVo vo);
+	int insert(BooksVo vo);
 	List<BooksVo> selectAll();
 	BooksVo selectById(Long id); 
 	List<BooksVo> selectByTitle(String key);

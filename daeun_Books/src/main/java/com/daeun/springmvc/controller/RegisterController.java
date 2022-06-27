@@ -13,7 +13,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.daeun.springmvc.exception.AlreadyExistingBookException;
 import com.daeun.springmvc.service.RegisterService;
@@ -39,16 +38,17 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/books/add", method = RequestMethod.POST)
-	public String register(@ModelAttribute("formData") RegisterRequest regReq, Errors errors, MultipartFile image,
-			HttpSession session) {
+	public String register(@ModelAttribute("formData") RegisterRequest regReq, Errors errors, HttpSession session) {
 		logger.info("RegisterController(register-post) 실행!!!");
 		
 		new RegisterRequestValidator().validate(regReq, errors);
-	
-		
+		if(errors.hasErrors()) {
+			logger.info("에러 : " + errors.toString());
+			return "books/book_reg_form";
+		}
 
-		if (!image.getOriginalFilename().equals("")) { //파일이 첨부되면
-			String originFileName = image.getOriginalFilename(); //원래 파일 이름
+		if (!regReq.getImage().getOriginalFilename().equals("")) { //파일이 첨부되면
+			String originFileName = regReq.getImage().getOriginalFilename(); //원래 파일 이름
 			String saveFileName = regReq.getIsbn() + originFileName; //저장될 파일 이름
 			String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/"); //저장 경로 설정 (session 이용)
 
@@ -56,18 +56,20 @@ public class RegisterController {
 			logger.info("savePath : " + savePath);
 
 			try {
-				image.transferTo(new File(savePath + saveFileName)); //파일 저장
-				regReq.setImage(originFileName); 
+				regReq.getImage().transferTo(new File(savePath + saveFileName)); //파일 저장
+				regReq.setOriginFile(originFileName); 
 				regReq.setSaveFile(saveFileName);
 				
-				registerService.regist(regReq);
-				if(errors.hasErrors()) {
-					return "books/book_reg_form";
-				}
+				 if (registerService.regist(regReq) != 1) { // 도서 등록 실패하면, 실패 예외 던지기
+		            	throw new Exception("등록 실패!!!");            	
+		         }
+				 
 				return "redirect:/books/list";
 			} catch (AlreadyExistingBookException e) {
 				errors.rejectValue("isbn", "exist");
 			} catch (IllegalStateException | IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

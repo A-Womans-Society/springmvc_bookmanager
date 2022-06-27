@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="BooksDao">
+<mapper namespace="book.dtd">
 
 	<!-- 도서 객체를 받아서 등록 -->
 	<insert id="insert" parameterType="vo">
-		INSERT INTO books (id, isbn, title, writer, publisher, price, image, introduce, saveFile)
-		VALUES (books_seq.NEXTVAL, #{isbn}, #{title}, #{writer}, #{publisher}, #{price}, #{image}, #{introduce}, #{saveFile})
+		INSERT INTO books (id, isbn, title, writer, publisher, price, originFile, introduce, saveFile)
+		VALUES (books_seq.NEXTVAL, #{isbn}, #{title}, #{writer}, #{publisher}, #{price}, #{originFile}, #{introduce}, #{saveFile})
 	</insert>
 	
 	<!-- ID 내림차순으로 나열된 도서 객체를 리스트로 반환 -->

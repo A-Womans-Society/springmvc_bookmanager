@@ -10,17 +10,16 @@ import com.daeun.springmvc.spring.RegisterRequest;
 
 @Service
 public class RegisterService {
+	
+	@Autowired
 	private BooksDao booksDao;
 
-	public RegisterService() {
-	}
-
-	@Autowired
+	public RegisterService() {}
 	public RegisterService(BooksDao booksDao) {
 		this.booksDao = booksDao;
 	}
 
-	public void regist(RegisterRequest req) {
+	public int regist(RegisterRequest req) {
 		BooksVo book = booksDao.selectByIsbn(req.getIsbn());
 		if (book != null) {
 			throw new AlreadyExistingBookException("이미 존재하는 책입니다.");
@@ -32,11 +31,11 @@ public class RegisterService {
 					req.getWriter(), 
 					req.getPublisher(),
 					req.getPrice(), 
-					req.getImage(), 
+					req.getOriginFile(), 
 					req.getIntroduce(),
 					req.getSaveFile());
 		
-		booksDao.insert(newBook);
+		return booksDao.insert(newBook);
 
 	}
 }

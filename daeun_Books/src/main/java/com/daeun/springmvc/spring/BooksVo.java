@@ -6,15 +6,15 @@ public class BooksVo {
 	private String title;
 	private String writer;
 	private String publisher;
-	private int price;
-	private String image;
+	private Integer price;
+	private String originFile;
 	private String introduce;
 	private String saveFile;
 
 	public BooksVo() {
 	}
 
-	public BooksVo(Long id, String isbn, String title, String writer, String publisher, int price, String image,
+	public BooksVo(Long id, String isbn, String title, String writer, String publisher, Integer price, String originFile,
 			String introduce, String saveFile) {
 		this.id = id;
 		this.isbn = isbn;
@@ -22,20 +22,20 @@ public class BooksVo {
 		this.writer = writer;
 		this.publisher = publisher;
 		this.price = price;
-		this.image = image;
+		this.originFile = originFile;
 		this.introduce = introduce;
 		this.saveFile = saveFile;
 	}
 
 	
-	public BooksVo(String isbn, String title, String writer, String publisher, int price, String image,
+	public BooksVo(String isbn, String title, String writer, String publisher, Integer price, String originFile,
 			String introduce, String saveFile) {
 		this.isbn = isbn;
 		this.title = title;
 		this.writer = writer;
 		this.publisher = publisher;
 		this.price = price;
-		this.image = image;
+		this.originFile = originFile;
 		this.introduce = introduce;
 		this.saveFile = saveFile;
 	}
@@ -80,20 +80,21 @@ public class BooksVo {
 		this.publisher = publisher;
 	}
 
-	public int getPrice() {
+	public Integer getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(Integer price) {
 		this.price = price;
 	}
 
-	public String getImage() {
-		return image;
+
+	public String getOriginFile() {
+		return originFile;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setOriginFile(String originFile) {
+		this.originFile = originFile;
 	}
 
 	public String getIntroduce() {

@@ -1,6 +1,7 @@
 package com.daeun.springmvc.spring;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class RegisterRequest {
@@ -8,34 +9,49 @@ public class RegisterRequest {
 	private String title;
 	private String writer;
 	private String publisher;
-	private int price;
-	private String image;
+	private Integer price;
+	private String originFile;
 	private String introduce;
 	private String saveFile;
+	private MultipartFile image;
 	
 	public RegisterRequest() {
 		
 	}
-	
-	public RegisterRequest(String isbn, String title, String writer, String publisher, int price, String image,
+
+	public RegisterRequest(String isbn, String title, String writer, String publisher, Integer price, String originFile,
+			String introduce, String saveFile, MultipartFile image) {
+		super();
+		this.isbn = isbn;
+		this.title = title;
+		this.writer = writer;
+		this.publisher = publisher;
+		this.price = price;
+		this.originFile = originFile;
+		this.introduce = introduce;
+		this.saveFile = saveFile;
+		this.image = image;
+	}
+
+	public RegisterRequest(String isbn, String title, String writer, String publisher, Integer price, String originFile,
 			String introduce) {
 		this.isbn = isbn;
 		this.title = title;
 		this.writer = writer;
 		this.publisher = publisher;
 		this.price = price;
-		this.image = image;
+		this.originFile = originFile;
 		this.introduce = introduce;
 	}
 	
-	public RegisterRequest(String isbn, String title, String writer, String publisher, int price, String image,
+	public RegisterRequest(String isbn, String title, String writer, String publisher, Integer price, String originFile,
 			String introduce, String saveFile) {
 		this.isbn = isbn;
 		this.title = title;
 		this.writer = writer;
 		this.publisher = publisher;
 		this.price = price;
-		this.image = image;
+		this.originFile = originFile;
 		this.introduce = introduce;
 		this.saveFile = saveFile;
 	}
@@ -72,19 +88,29 @@ public class RegisterRequest {
 		this.publisher = publisher;
 	}
 
-	public int getPrice() {
+	public Integer getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(Integer price) {
 		this.price = price;
 	}
 
-	public String getImage() {
+
+
+	public String getOriginFile() {
+		return originFile;
+	}
+
+	public void setOriginFile(String originFile) {
+		this.originFile = originFile;
+	}
+
+	public MultipartFile getImage() {
 		return image;
 	}
 
-	public void setImage(String image) {
+	public void setImage(MultipartFile image) {
 		this.image = image;
 	}
 

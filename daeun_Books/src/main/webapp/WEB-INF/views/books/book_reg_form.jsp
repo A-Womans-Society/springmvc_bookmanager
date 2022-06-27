@@ -5,27 +5,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>책 등록</title>
-<style type="text/css">
-span {
-	color: red;
-}
-</style>
-<script>
-	function PreviewImage() {
-		var preview = new FileReader();
-		preview.onload = function(e) {
-			document.getElementById("book_image").src = e.target.result;
-		};
-		preview.readAsDataURL(document.getElementById("image").files[0]);
-	};
-</script>
+	<meta charset="UTF-8">
+	<title>책 등록</title>
+	<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+	<style type="text/css">
+		span {
+			color: red;
+		}
+	</style>
 </head>
 <body>
 	<h3>도서정보관리 - 도서추가</h3>
-	<form:form action="add" modelAttribute="formData"
-		enctype="multipart/form-data" method="post">
+	<form:form id="form" action="add" modelAttribute="formData"
+		enctype="multipart/form-data" method="post" onsubmit="return validate();">
 		<table border="1">
 			<tr>
 				<td colspan="3" align="right"><span>*</span>표시는 필수입니다.</td>
@@ -34,7 +26,7 @@ span {
 				<td rowspan="6" width="200" height="250" id="imgTd"><img
 					id="book_image" style="width: 100%; height: 100%;"></td>
 				<td><b><span>*</span>BOOK ISBN</b></td>
-				<td><input type="text" name="isbn" id="isbn" /><br /> <span>
+				<td><form:input path="isbn" /><br /> <span>
 				<form:errors path="isbn"/></span></td>
 			</tr>
 			<tr>
@@ -56,14 +48,15 @@ span {
 			</tr>
 			<tr>
 				<td><b><span>*</span>도서 가격</b></td>
-				<td><input type="text" name="price" id="price" />
-					<form:errors path="price"/></td>
+				<td><form:input path="price" />
+					<br/><form:errors path="price"/></td>
 			</tr>
 			<tr>
 				<td><b><span>*</span>이미지</b></td>
-				<td><input type="file" name="image" id="image"
+				<td><input type="file" name="image" id="file" accept="image/*"
 					onchange="PreviewImage();" /><br/>
-					</td>
+ 					<%-- <form:errors path="image"/> --%>
+ 					</td>
 			</tr>
 			<tr>
 				<td><b><span>*</span>책소개</b></td>
@@ -77,5 +70,23 @@ span {
 		<button type="button" onclick="location.href='${pageContext.request.contextPath}/books/list'">
 		도서정보목록</button>
 	</form:form>
+<script>
+	function PreviewImage() {
+		var preview = new FileReader();
+		preview.onload = function(e) {
+			document.getElementById("book_image").src = e.target.result;
+		};
+		preview.readAsDataURL(document.getElementById("file").files[0]);
+	};
+	
+	function validate(form) {
+		if ( $('#file').val()=='' ) {
+			alert("도서표지사진(png/jpeg)을 첨부해 주세요.") ;
+			return false ;
+			}
+		return true;
+	}
+
+</script>
 </body>
 </html>
