@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="BooksDao">
+
+	<!-- 도서 객체를 받아서 등록 -->
+	<insert id="insert" parameterType="vo">
+		INSERT INTO books (id, isbn, title, writer, publisher, price, image, introduce, saveFile)
+		VALUES (books_seq.NEXTVAL, #{isbn}, #{title}, #{writer}, #{publisher}, #{price}, #{image}, #{introduce}, #{saveFile})
+	</insert>
+	
+	<!-- ID 내림차순으로 나열된 도서 객체를 리스트로 반환 -->
+	<select id="list" resultType="vo">
+		SELECT * FROM books ORDER BY id ASC
+	</select>
+	
+	<!-- ID를 받아서 해당하는 도서 객체 반환 -->
+	<select id="selectById" parameterType="Long" resultType="vo">
+		SELECT * FROM books WHERE id=#{id}
+	</select>
+
+	<!-- 검색된 key에 해당하는 도서 객체 리스트로 반환 -->
+	<select id="selectByTitle" parameterType="String" resultType="vo">
+		SELECT * FROM books WHERE title LIKE '%'||#{key}||'%'
+	</select> 
+	
+	<select id="selectByWriter" parameterType="String" resultType="vo">
+		SELECT * FROM books WHERE writer LIKE '%'||#{key}||'%'
+	</select> 
+	
+	<select id="selectByPublisher" parameterType="String" resultType="vo">
+		SELECT * FROM books WHERE publisher LIKE '%'||#{key}||'%'
+	</select> 
+	
+	
+	<!-- BOOK_ISBN을 받아서 해당하는 도서 객체 반환 -->
+	<select id="selectByIsbn" parameterType="String" resultType="vo">
+		SELECT * FROM books WHERE isbn = #{isbn}
+	</select>
+	
+</mapper>
