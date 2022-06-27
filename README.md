@@ -25,5 +25,5 @@
 - [우문주(melanieing)](www.naver.com)
 - [김민경(mki1105)](www.naver.com)
 - [김수림(ksoolim)](www.naver.com)
-- [하예진(Yejin-Ha)](www.naver.com)
+- [하예진(Yejin-Ha)](https://puddle-horse-c8c.notion.site/084deba1ef914f14b77e797793116730)
 - [홍다은(da11un)](www.naver.com)
